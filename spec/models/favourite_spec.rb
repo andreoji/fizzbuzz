@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Favourite, :type => :model do
-  user = User.create(username: 'jose', password: 'elixir')
+  user = User.create(username: 'jose', password_digest: 'elixir')
   subject { described_class.new(number: 666, user_id: user.id) }
 
   it 'is not valid without a number' do

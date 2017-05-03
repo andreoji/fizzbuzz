@@ -6,7 +6,7 @@ FactoryGirl.define do
 
   factory :user do
     username 'jose'
-    password 'elixir'
+    password_digest 'elixir'
     factory :user_with_favourites do
       transient do
         favourites_count 5

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170502192043) do
+ActiveRecord::Schema.define(version: 20170503064038) do
 
   create_table "favourites", force: :cascade do |t|
     t.integer  "number"
@@ -22,9 +22,9 @@ ActiveRecord::Schema.define(version: 20170502192043) do
 
   create_table "users", force: :cascade do |t|
     t.string   "username"
-    t.string   "password"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "password_digest"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
 end
