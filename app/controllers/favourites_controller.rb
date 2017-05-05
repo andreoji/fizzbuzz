@@ -1,10 +1,10 @@
 class FavouritesController < ApplicationController
-  before_action :set_favourite, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize
+  before_action :authorize, :set_favourite, only: [:show, :edit, :update, :destroy]
+
   # GET /favourites
   # GET /favourites.json
   def index
-    @favourites = Favourite.all
+    @favourites = Favourite.where("user_id = ?", session[:user_id])
   end
 
   # GET /favourites/1
