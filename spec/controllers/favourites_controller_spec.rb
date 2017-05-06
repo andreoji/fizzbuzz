@@ -47,4 +47,15 @@ RSpec.describe FavouritesController, :type => :controller do
       end
     end
   end
+
+  describe '#destroy' do
+    let!(:jose) { create(:user, username: 'jose', password_digest: 'elixir') }
+    let!(:jose_favourite) { create(:favourite, number: 1, user_id: jose.id) }
+    it 'deletes the favourite' do
+      expect {
+        session[:user_id] = jose.id
+        delete :destroy, params: { id: jose_favourite.id }
+      }.to change(Favourite, :count).by(-1)
+    end 
+  end
 end
