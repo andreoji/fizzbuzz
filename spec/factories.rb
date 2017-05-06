@@ -3,7 +3,6 @@ FactoryGirl.define do
     number {rand(999)}
     user
   end
-
   factory :user do
     username 'jose'
     password_digest 'elixir'

@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170503064038) do
+ActiveRecord::Schema.define(version: 20170506035747) do
 
   create_table "favourites", force: :cascade do |t|
-    t.integer  "number"
+    t.integer  "number",     null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "user_id"

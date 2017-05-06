@@ -25,7 +25,6 @@ class FavouritesController < ApplicationController
   # POST /favourites.json
   def create
     @favourite = Favourite.new(favourite_params)
-
     respond_to do |format|
       if @favourite.save
         format.html { redirect_to @favourite, notice: 'Favourite was successfully created.' }
@@ -69,6 +68,6 @@ class FavouritesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def favourite_params
-      params.require(:favourite).permit(:number)
+      params.require(:favourite).permit(:number).merge(user_id: session[:user_id])
     end
 end
