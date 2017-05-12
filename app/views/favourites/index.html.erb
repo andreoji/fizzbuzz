@@ -5,13 +5,15 @@
 -->
 <%= @previous_page = (params[:page].to_i - 1).to_s %>
 <%= @next_page = (params[:page].to_i + 1).to_s %>
-<%= link_to "previous",
-  favourites_path(page: @previous_page,  per_page: params[:per_page], pagination: "previous"),
-  controller: :favourites, action: :index %>
+<%= link_to_if(params[:page].to_i > 1, 'previous',
+                               favourites_path(page: @previous_page,
+                                               per_page: params[:per_page],
+                                               pagination: 'previous')) %>
 
-<%= link_to "next",
-  favourites_path(page: @next_page, per_page: params[:per_page], pagination: "next"),
-  controller: :favourites, action: :index %>
+<%= link_to 'next',
+  favourites_path(page: @next_page,
+                  per_page: params[:per_page],
+                  pagination: 'next') %>
 <%= form_tag(favourites_path, method: :put) do %>
   <% @numbers %>
   <% for number in @numbers %>
