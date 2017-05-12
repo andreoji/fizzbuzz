@@ -7,24 +7,24 @@ class Pagination
     case params[:pagination]
     when nil
       first = PAGE
-      last = PER_PAGE + 1
+      last = PER_PAGE
       numbers = (first..last).to_a
       { page: PAGE, per_page: PER_PAGE, numbers: numbers }
     when 'next'
       page = get_page(params)
       per_page = get_per_page(params)
       first = page
-      first = (((page - 1) * per_page) + page) if page > 1
-      last = ((page * per_page) + page)
+      first = (((page - 1) * per_page) + 1) if page > 1
+      last = (page * per_page)
       numbers = (first..last).to_a
       { page: page, per_page: per_page, numbers: numbers }
     when 'previous'
       page = get_page(params) 
       per_page = get_per_page(params) 
       first = page
-      last = (per_page + 1)
-      last = ((page - 1) * per_page) + (page - 1) if page > 1
-      first = (last - per_page) if page > 1
+      last = per_page
+      last = ((page - 1) * per_page) if page > 1
+      first = ((last - per_page) + 1) if page > 1
       numbers = (first..last).to_a
       { page: page, per_page: per_page, numbers: numbers }
     when 'previous'
