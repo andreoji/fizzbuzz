@@ -1,10 +1,36 @@
 class FavouritesController < ApplicationController
-  before_action :authorize, :set_favourite, only: [:show, :edit, :update, :destroy]
+  before_action :authorize, :set_favourite, only: [:update, :destroy]
 
+  PAGE = 1
+  PER_PAGE = 10
+  MAX = 1_000_000_000_000
+  def next
+    page = (params[:page] || PAGE).to_i
+    per_page = (params[:per_page] || PER_PAGE).to_i
+    first = page
+    first = (((page - 1) * per_page) + page) if page > 1
+    last = ((page * per_page) + page)
+    numbers = (first..last).to_a
+    session[:numbers] = numbers
+    redirect_to favourites_path(:page => page, :per_page => per_page)
+  end
+
+  def previous 
+    page = (params[:page] || PAGE).to_i
+    per_page = (params[:per_page] || PER_PAGE).to_i
+    first = page
+    last = (per_page + 1)
+    last = ((page - 1) * per_page) + (page - 1) if page > 1
+    first = (last - per_page) if page > 1
+    numbers = (first..last).to_a
+    session[:numbers] = numbers
+    redirect_to favourites_path(:page => page, :per_page => per_page)
+  end
   # GET /favourites
   # GET /favourites.json
   def index
-    @favourites = Favourite.where("user_id = ?", session[:user_id])
+    session[:numbers] ||= (PAGE..(PER_PAGE + 1)).to_a 
+    #@favourites = Favourite.where("user_id = ?", session[:user_id]).page(params[:page]).per(2)
   end
 
   # GET /favourites/1
@@ -68,6 +94,6 @@ class FavouritesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def favourite_params
-      params.require(:favourite).permit(:number).merge(user_id: session[:user_id])
+      params.require(:favourite).permit(:number, :favourite_numbers, :page, :per_page).merge(user_id: session[:user_id])
     end
 end
