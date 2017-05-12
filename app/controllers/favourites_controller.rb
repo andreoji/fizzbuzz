@@ -10,8 +10,7 @@ class FavouritesController < ApplicationController
     first = page
     first = (((page - 1) * per_page) + page) if page > 1
     last = ((page * per_page) + page)
-    numbers = (first..last).to_a
-    session[:numbers] = numbers
+    @numbers = (first..last).to_a
     redirect_to favourites_path(:page => page, :per_page => per_page)
   end
 
@@ -22,14 +21,42 @@ class FavouritesController < ApplicationController
     last = (per_page + 1)
     last = ((page - 1) * per_page) + (page - 1) if page > 1
     first = (last - per_page) if page > 1
-    numbers = (first..last).to_a
-    session[:numbers] = numbers
+    @numbers = (first..last).to_a
     redirect_to favourites_path(:page => page, :per_page => per_page)
   end
   # GET /favourites
   # GET /favourites.json
   def index
-    session[:numbers] ||= (PAGE..(PER_PAGE + 1)).to_a 
+    case params[:pagination]
+    when nil
+      first = PAGE
+      last = PER_PAGE + 1
+      @numbers = (first..last).to_a
+      params[:page], params[:per_page] = PAGE, PER_PAGE
+    when 'next'
+      page = (params[:page] || PAGE).to_i
+      per_page = (params[:per_page] || PER_PAGE).to_i
+      params[:page], params[:per_page] = page, per_page
+      first = page
+      first = (((page - 1) * per_page) + page) if page > 1
+      last = ((page * per_page) + page)
+      @numbers = (first..last).to_a
+    when 'previous'
+      page = (params[:page] || PAGE).to_i
+      per_page = (params[:per_page] || PER_PAGE).to_i
+      params[:page], params[:per_page] = page, per_page
+      first = page
+      first = page
+      last = (per_page + 1)
+      last = ((page - 1) * per_page) + (page - 1) if page > 1
+      first = (last - per_page) if page > 1
+      @numbers = (first..last).to_a
+    else
+      first = PAGE
+      last = PER_PAGE + 1
+      redirect_to favourites_path(:page => PAGE, :per_page => PER_PAGE)
+    end
+
     #@favourites = Favourite.where("user_id = ?", session[:user_id]).page(params[:page]).per(2)
   end
 

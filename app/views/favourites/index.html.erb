@@ -6,15 +6,15 @@
 <%= @previous_page = (params[:page].to_i - 1).to_s %>
 <%= @next_page = (params[:page].to_i + 1).to_s %>
 <%= link_to "previous",
-  favourites_previous_path(page: @previous_page,  per_page: params[:per_page]),
-  controller: :favourites, action: :previous %>
+  favourites_path(page: @previous_page,  per_page: params[:per_page], pagination: "previous"),
+  controller: :favourites, action: :index %>
 
 <%= link_to "next",
-  favourites_next_path(page: @next_page, per_page: params[:per_page]),
-  controller: :favourites, action: :next %>
+  favourites_path(page: @next_page, per_page: params[:per_page], pagination: "next"),
+  controller: :favourites, action: :index %>
 <%= form_tag(favourites_path, method: :put) do %>
-  <% numbers = session[:numbers] %>
-  <% for number in numbers %>
+  <% @numbers %>
+  <% for number in @numbers %>
     <ul>
       <li>
         <%= check_box_tag 'favourite_numbers[]', number, checked: true %>
