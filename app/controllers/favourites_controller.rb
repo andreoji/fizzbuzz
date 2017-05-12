@@ -1,42 +1,14 @@
 class FavouritesController < ApplicationController
   before_action :authorize, :set_favourite, only: [:update, :destroy]
 
-  PAGE = 1
-  PER_PAGE = 100
-  MAX = 1_000_000_000_000
   # GET /favourites
   # GET /favourites.json
   def index
-    case params[:pagination]
-    when nil
-      first = PAGE
-      last = PER_PAGE + 1
-      @numbers = (first..last).to_a
-      params[:page], params[:per_page] = PAGE, PER_PAGE
-    when 'next'
-      page = (params[:page] || PAGE).to_i
-      per_page = (params[:per_page] || PER_PAGE).to_i
-      params[:page], params[:per_page] = page, per_page
-      first = page
-      first = (((page - 1) * per_page) + page) if page > 1
-      last = ((page * per_page) + page)
-      @numbers = (first..last).to_a
-    when 'previous'
-      page = (params[:page] || PAGE).to_i
-      per_page = (params[:per_page] || PER_PAGE).to_i
-      params[:page], params[:per_page] = page, per_page
-      first = page
-      last = (per_page + 1)
-      last = ((page - 1) * per_page) + (page - 1) if page > 1
-      first = (last - per_page) if page > 1
-      @numbers = (first..last).to_a
-    else
-      first = PAGE
-      last = PER_PAGE + 1
-      params[:page], params[:per_page] = PAGE, PER_PAGE
-    end
-
-    #@favourites = Favourite.where("user_id = ?", session[:user_id]).page(params[:page]).per(2)
+    pagination = Pagination.call(params)
+    params[:page] = pagination[:page]
+    params[:per_page] = pagination[:per_page]
+    @numbers = pagination[:numbers]
+    @favourites = Favourite.where("user_id = ?", session[:user_id])
   end
 
   # GET /favourites/1
