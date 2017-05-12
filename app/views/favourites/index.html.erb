@@ -3,15 +3,15 @@
 
 <h1>Favourites</h1>
 -->
-<%= @previous_page = (params[:page].to_i - 1).to_s %>
-<%= @next_page = (params[:page].to_i + 1).to_s %>
+<%= previous_page = (params[:page].to_i - 1).to_s %>
+<%= next_page = (params[:page].to_i + 1).to_s %>
 <%= link_to_if(params[:page].to_i > 1, 'previous',
-                               favourites_path(page: @previous_page,
+                               favourites_path(page: previous_page,
                                                per_page: params[:per_page],
                                                pagination: 'previous')) %>
 
 <%= link_to 'next',
-  favourites_path(page: @next_page,
+  favourites_path(page: next_page,
                   per_page: params[:per_page],
                   pagination: 'next') %>
 <%= form_tag(favourites_path, method: :put) do %>
