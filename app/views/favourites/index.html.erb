@@ -15,12 +15,14 @@
                   per_page: params[:per_page],
                   pagination: 'next') %>
 <%= form_tag(favourites_path, method: :put) do %>
-  <% @numbers %>
-  <% for number in @numbers %>
+  <% @fizzbuzzes %>
+  <% for fizzbuzz in @fizzbuzzes %>
     <ul>
       <li>
-        <%= check_box_tag 'favourite_numbers[]', number, checked: true %>
-        <%= number %>
+        <%= check_box_tag 'favourite_numbers[]', fizzbuzz[:number], fizzbuzz[:fave] %>
+        <%= fizzbuzz[:number] %>
+        <%= fizzbuzz[:value] %>
+        <%= fizzbuzz[:fave].class %>
       </li>
     </ul>
   <% end %>

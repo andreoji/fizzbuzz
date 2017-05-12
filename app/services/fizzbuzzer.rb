@@ -1,6 +1,7 @@
 class Fizzbuzzer
-  def self.call(numbers)
-    numbers.map{ |n| {number: n, value: fizzbuzz(n) } }
+  def self.call(numbers, favourites)
+    common = numbers & favourites
+    numbers.map{ |n| {number: n, value: fizzbuzz(n), fave: common.include?(n) } }
   end
 
   private

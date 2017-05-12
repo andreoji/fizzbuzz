@@ -1,5 +1,5 @@
 class FavouritesController < ApplicationController
-  before_action :authorize, :set_favourite, only: [:update, :destroy]
+  before_action :authorize, :set_favourite, only: [:update, :destroy, :show]
 
   # GET /favourites
   # GET /favourites.json
@@ -7,8 +7,17 @@ class FavouritesController < ApplicationController
     pagination = Pagination.call(params)
     params[:page] = pagination[:page]
     params[:per_page] = pagination[:per_page]
-    @numbers = pagination[:numbers]
-    @favourites = Favourite.where("user_id = ?", session[:user_id])
+    puts "********favourited: #{params[:favourite_numbers].inspect} ******"
+    numbers = pagination[:numbers]
+    favourite_numbers = params[:favourite_numbers]
+    @favourites = Favourite.where("user_id = ?", session[:user_id]).pluck(:number)
+    unless favourite_numbers.nil?
+      removed_favourites = @favourites - favourite_numbers
+      puts "*****removed: #{removed_favourites.inspect}****"
+      new_favourites = favourite_numbers - @favourites
+      puts "*****new: #{new_favourites.inspect}****"
+    end
+    @fizzbuzzes = Fizzbuzzer.call(numbers, @favourites)
   end
 
   # GET /favourites/1
