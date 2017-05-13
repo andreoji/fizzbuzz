@@ -4,20 +4,38 @@ class FavouritesController < ApplicationController
   # GET /favourites
   # GET /favourites.json
   def index
-    puts "********page: #{params[:page]} ******"
-    puts "********per_page: #{params[:per_page]} ******"
-    puts "********pagination: #{params[:pagination]} ******"
-
     pagination = Pagination.call(params)
     current_page_numbers = pagination[:numbers]
     params[:page] = pagination[:page]
     params[:per_page] = pagination[:per_page]
-    @saved_favourites = Favourite.where("user_id = ?", session[:user_id]).pluck(:number)
-    favourites_state = FavouritesState.call(params, current_page_numbers, @saved_favourites)
-    puts "********favourites_state: #{favourites_state.inspect} ******"
-    @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @saved_favourites)
+    current_user_id = session[:user_id]
+    @saved_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
+    @fizzbuzzes = create_fizzbuzz_numbers(params, current_page_numbers, @saved_favourites, current_user_id)
+    #if params[:pagination] == 'faves'
+    #  favourites_state = FavouritesState.call(params, current_page_numbers, @saved_favourites)
+    #  Favourite.where("user_id = ?", current_user_id).where(number: favourites_state[:deleted_favourites]).delete_all
+    #  new_favourites = favourites_state[:new_favourites].map { |n| {number: n, user_id: current_user_id }}
+    #  Favourite.create(new_favourites)
+    #  @updated_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
+    #  @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @updated_favourites)
+    #else 
+    #  @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @saved_favourites)
+    #end
   end
 
+  def create_fizzbuzz_numbers(params, current_page_numbers, saved_favourites, current_user_id)
+    if params[:pagination] == 'faves'
+      favourites_state = FavouritesState.call(params, current_page_numbers, saved_favourites)
+      Favourite.where("user_id = ?", current_user_id).where(number: favourites_state[:deleted_favourites]).delete_all
+      new_favourites = favourites_state[:new_favourites].map { |n| {number: n, user_id: current_user_id }}
+      Favourite.create(new_favourites)
+      updated_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
+      Fizzbuzzer.call(current_page_numbers, updated_favourites)
+    else 
+      Fizzbuzzer.call(current_page_numbers, saved_favourites)
+    end
+  end
+    
   # GET /favourites/1
   # GET /favourites/1.json
   def show
