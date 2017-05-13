@@ -1,6 +1,7 @@
 class Pagination
   PAGE = 1
   PER_PAGE = 100
+  MIN_PER_PAGE = 5
   MAX = 1_000_000_000_000
   
   def self.call(params)
@@ -41,10 +42,14 @@ class Pagination
   end
   private
   def self.get_page(params)
-    (params[:page] || PAGE).to_i
+    page = (params[:page] || PAGE).to_i
+    return 1 if page < 1
+    page
   end
 
   def self.get_per_page(params)
-    (params[:per_page] || PER_PAGE).to_i
+    per_page = (params[:per_page] || PER_PAGE).to_i
+    return PER_PAGE if per_page < 1
+    per_page
   end
 end
