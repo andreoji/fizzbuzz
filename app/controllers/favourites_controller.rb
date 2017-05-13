@@ -4,20 +4,28 @@ class FavouritesController < ApplicationController
   # GET /favourites
   # GET /favourites.json
   def index
+    puts "********page: #{params[:page]} ******"
+    puts "********per_page: #{params[:per_page]} ******"
+    puts "********pagination: #{params[:pagination]} ******"
+
     pagination = Pagination.call(params)
     params[:page] = pagination[:page]
     params[:per_page] = pagination[:per_page]
-    puts "********favourited: #{params[:favourite_numbers].inspect} ******"
-    numbers = pagination[:numbers]
-    favourite_numbers = params[:favourite_numbers]
-    @favourites = Favourite.where("user_id = ?", session[:user_id]).pluck(:number)
-    unless favourite_numbers.nil?
-      removed_favourites = @favourites - favourite_numbers
+    current_page_numbers = pagination[:numbers]
+    puts "********current_page_numbers: #{current_page_numbers.inspect} ******"
+    marked_as_favourites = params[:favourite_numbers]
+    puts "******marked_as_favourites: #{marked_as_favourites.inspect} *****"
+    @saved_favourites = Favourite.where("user_id = ?", session[:user_id]).pluck(:number)
+    puts "******saved favourites: #{@saved_favourites.inspect} *****"
+    currently_displayed_favourites = @saved_favourites & current_page_numbers
+    puts "******currently_displayed_favourites: #{currently_displayed_favourites.inspect} *****"
+    unless marked_as_favourites.nil?
+      removed_favourites = currently_displayed_favourites - marked_as_favourites.map{ |n| n.to_i }
       puts "*****removed: #{removed_favourites.inspect}****"
-      new_favourites = favourite_numbers - @favourites
+      new_favourites = marked_as_favourites.map{ |n| n.to_i } - @saved_favourites
       puts "*****new: #{new_favourites.inspect}****"
     end
-    @fizzbuzzes = Fizzbuzzer.call(numbers, @favourites)
+    @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @saved_favourites)
   end
 
   # GET /favourites/1

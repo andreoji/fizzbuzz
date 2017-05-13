@@ -23,11 +23,18 @@ class Pagination
       per_page = get_per_page(params) 
       first = page
       last = per_page
-      last = ((page - 1) * per_page) if page > 1
+      last = (page * per_page) if page > 1
       first = ((last - per_page) + 1) if page > 1
       numbers = (first..last).to_a
       { page: page, per_page: per_page, numbers: numbers }
-    when 'previous'
+    when 'faves'
+      page = get_page(params) 
+      per_page = get_per_page(params) 
+      first = page
+      first = (((page - 1) * per_page) + 1) if page > 1
+      last = (page * per_page)
+      numbers = (first..last).to_a
+      { page: page, per_page: per_page, numbers: numbers }
     else
       { page: PAGE, per_page: PER_PAGE, numbers: [] }
     end
