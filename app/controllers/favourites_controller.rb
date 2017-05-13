@@ -11,16 +11,6 @@ class FavouritesController < ApplicationController
     current_user_id = session[:user_id]
     @saved_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
     @fizzbuzzes = create_fizzbuzz_numbers(params, current_page_numbers, @saved_favourites, current_user_id)
-    #if params[:pagination] == 'faves'
-    #  favourites_state = FavouritesState.call(params, current_page_numbers, @saved_favourites)
-    #  Favourite.where("user_id = ?", current_user_id).where(number: favourites_state[:deleted_favourites]).delete_all
-    #  new_favourites = favourites_state[:new_favourites].map { |n| {number: n, user_id: current_user_id }}
-    #  Favourite.create(new_favourites)
-    #  @updated_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
-    #  @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @updated_favourites)
-    #else 
-    #  @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @saved_favourites)
-    #end
   end
 
   def create_fizzbuzz_numbers(params, current_page_numbers, saved_favourites, current_user_id)
