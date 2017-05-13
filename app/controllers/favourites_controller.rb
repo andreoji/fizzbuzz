@@ -9,22 +9,12 @@ class FavouritesController < ApplicationController
     puts "********pagination: #{params[:pagination]} ******"
 
     pagination = Pagination.call(params)
+    current_page_numbers = pagination[:numbers]
     params[:page] = pagination[:page]
     params[:per_page] = pagination[:per_page]
-    current_page_numbers = pagination[:numbers]
-    puts "********current_page_numbers: #{current_page_numbers.inspect} ******"
-    marked_as_favourites = params[:favourite_numbers]
-    puts "******marked_as_favourites: #{marked_as_favourites.inspect} *****"
     @saved_favourites = Favourite.where("user_id = ?", session[:user_id]).pluck(:number)
-    puts "******saved favourites: #{@saved_favourites.inspect} *****"
-    currently_displayed_favourites = @saved_favourites & current_page_numbers
-    puts "******currently_displayed_favourites: #{currently_displayed_favourites.inspect} *****"
-    unless marked_as_favourites.nil?
-      removed_favourites = currently_displayed_favourites - marked_as_favourites.map{ |n| n.to_i }
-      puts "*****removed: #{removed_favourites.inspect}****"
-      new_favourites = marked_as_favourites.map{ |n| n.to_i } - @saved_favourites
-      puts "*****new: #{new_favourites.inspect}****"
-    end
+    favourites_state = FavouritesState.call(params, current_page_numbers, @saved_favourites)
+    puts "********favourites_state: #{favourites_state.inspect} ******"
     @fizzbuzzes = Fizzbuzzer.call(current_page_numbers, @saved_favourites)
   end
 

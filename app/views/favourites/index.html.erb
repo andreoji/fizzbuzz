@@ -22,7 +22,7 @@
   <% for fizzbuzz in @fizzbuzzes %>
     <ul>
       <li>
-        <%= check_box_tag 'favourite_numbers[]', fizzbuzz[:number], fizzbuzz[:fave] %>
+        <%= check_box_tag 'marked_as_favourites[]', fizzbuzz[:number], fizzbuzz[:fave] %>
         <%= fizzbuzz[:number] %>
         ****
         <%= fizzbuzz[:value] %>
