@@ -58,6 +58,7 @@ class Pagination
   def self.get_per_page(params)
     per_page = (params[:per_page] || PER_PAGE).to_i
     return PER_PAGE if per_page < 1
+    return MAX_PER_PAGE if per_page > MAX_PER_PAGE
     per_page
   end
 end
