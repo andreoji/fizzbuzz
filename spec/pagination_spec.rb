@@ -62,6 +62,24 @@ RSpec.describe Pagination do
        # it 'sets per_page to 100
        # /(\D+)/.match(a).nil? and a.to_i > 0
       end
+      #999999999 1000000001 previous next
+      #http://192.168.1.45:3000/favourites?page=1000000000&pagination=next&per_page=1000
+      #999999999001 **** 999999999001
+      #1000000000000 **** buzz
+      context 'when it is equal to page max' do
+          it 'sets page to 1000000000' do
+            expect(
+              Pagination.call({ pagination: 'next', page: '1000000000', per_page: '1000' })
+            ).to eq({ page: 1000000000, per_page: 1000, numbers: (999999999001..100000000000).to_a })
+          end
+      end
+      context 'when it is greater than page max' do
+          it 'sets page to 1000000000' do
+            expect(
+              Pagination.call({ pagination: 'next', page: '1000000001', per_page: '1000' })
+            ).to eq({ page: 1000000000, per_page: 1000, numbers: (999999999001..100000000000).to_a })
+          end
+      end
     end
     describe 'per_page param' do
       context 'when it is 0' do
@@ -87,6 +105,25 @@ RSpec.describe Pagination do
        # it 'sets per_page to 100
        # /(\D+)/.match(a).nil? and a.to_i > 0
 
+      end
+      context 'when it is equal to per_page max' do
+          it 'sets per_page to 1000' do
+            expect(
+              Pagination.call({ pagination: 'next', page: '1000000000', per_page: '1000' })
+            ).to eq({ page: 1000000000, per_page: 1000, numbers: (999999999001..100000000000).to_a }) end
+      end
+      context 'when it is greater than per_page max' do
+          #it 'sets per_page to 1000' do
+          #  expect(
+          #    Pagination.call({ pagination: 'next', page: '1000000000', per_page: '10000' })
+          #  ) == ({ page: 1000000000, per_page: 1000, numbers: (999999999001..100000000000) .to_a })
+          #end
+          it 'sets per_page to 1000' do
+            expect(
+              Pagination.call({ pagination: 'next', page: '1000000000', per_page: '1001' })
+            #) == ({ page: 1000000000, per_page: 1000, numbers: (999999999001..100000000000).to_a })
+            ).to eq({ page: 1000000000, per_page: 1000, numbers: (100..200).to_a })
+          end
       end
     end
   end
