@@ -3,23 +3,9 @@
 
 <h1>Favourites</h1>
 -->
-<%= previous_page = (params[:page].to_i - 1).to_s %>
-<%= next_page = (params[:page].to_i + 1).to_s %>
-<%= link_to_if(params[:page].to_i > 1, 'previous',
-                               favourites_path(page: previous_page,
-                                               per_page: params[:per_page],
-                                               pagination: 'previous')) %>
-
-<%= link_to 'next',
-  favourites_path(page: next_page,
-                  per_page: params[:per_page],
-                  pagination: 'next') %>
-
-<%= form_tag(favourites_path(page: params[:page],
-                             per_page: params[:per_page],
-                             pagination: 'faves'), method: :put) do %>
-  <% @fizzbuzzes %>
-  <% for fizzbuzz in @fizzbuzzes %>
+<%= will_paginate @fizzbuzz_numbers %>
+<%= form_tag(favourites_path(page: params[:page], per_page: params[:per_page]), method: :put) do %>
+  <% for fizzbuzz in @fizzbuzz_numbers %>
     <ul>
       <li>
         <%= check_box_tag 'marked_as_favourites[]', fizzbuzz[:number], fizzbuzz[:fave] %>

@@ -1,9 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Fizzbuzzer do
-
-  describe '#call' do
-    let(:favourites) {[1, 5, 13, 15]}
+RSpec.describe FizzbuzzGenerator do
+  describe '#numbers' do
+    let(:favourites) {[1, 5, 13, 15, 21, 30]}
     let(:fizzbuzz_one_to_fifteen) {[{number: 1, value: 1, fave: true}, {number: 2, value: 2, fave: false},
                                     {number: 3, value: 'fizz', fave: false}, {number: 4, value: 4, fave: false},
                                     {number: 5, value: 'buzz', fave: true}, {number: 6, value: 'fizz', fave: false},
@@ -13,8 +12,15 @@ RSpec.describe Fizzbuzzer do
                                     {number: 13, value: 13, fave: true}, {number: 14, value: 14, fave: false},
                                     {number: 15, value: 'fizzbuzz', fave: true}]}
 
-    it '1 to 15' do
-      expect(Fizzbuzzer.call((1..15).to_a, favourites)).to eq fizzbuzz_one_to_fifteen
-    end  
+      subject { FizzbuzzGenerator.new(favourites: favourites) }
+      it 'inlcudes favourites in page range' do
+        expect(subject.numbers(1, 15)).to eq fizzbuzz_one_to_fifteen
+      end
+      it 'excludes 21 fizz' do
+        expect(subject.numbers(1, 15).include?({ number:21, value: 'fizz', fave: true })).to eq false 
+      end
+      it 'excludes 30 fizzbuzz' do
+        expect(subject.numbers(1, 15).include?({ number:30, value: 'fizzbuzz', fave: true })).to eq false 
+      end
   end
 end

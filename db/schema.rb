@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170506035747) do
+ActiveRecord::Schema.define(version: 20170515225825) do
 
   create_table "favourites", force: :cascade do |t|
-    t.integer  "number",     null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "number",     limit: 8, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
     t.integer  "user_id"
     t.index ["user_id"], name: "index_favourites_on_user_id"
   end

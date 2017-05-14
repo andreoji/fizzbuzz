@@ -1,31 +1,24 @@
 class FavouritesController < ApplicationController
   before_action :authorize, :set_favourite, only: [:update, :destroy, :show]
-
   # GET /favourites
   # GET /favourites.json
   def index
-    pagination = Pagination.call(params)
-    current_page_numbers = pagination[:numbers]
-    params[:page] = pagination[:page]
-    params[:per_page] = pagination[:per_page]
     current_user_id = session[:user_id]
-    @saved_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
-    @fizzbuzzes = create_fizzbuzz_numbers(params, current_page_numbers, @saved_favourites, current_user_id)
+    favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
+    numbers_pager = NumbersPager.new({params: params, generator: FizzbuzzGenerator.new(favourites: favourites)})
+    @fizzbuzz_numbers = numbers_pager.call
   end
-
-  def create_fizzbuzz_numbers(params, current_page_numbers, saved_favourites, current_user_id)
-    if params[:pagination] == 'faves'
-      favourites_state = FavouritesState.call(params, current_page_numbers, saved_favourites)
-      Favourite.where("user_id = ?", current_user_id).where(number: favourites_state[:deleted_favourites]).delete_all
-      new_favourites = favourites_state[:new_favourites].map { |n| {number: n, user_id: current_user_id }}
-      Favourite.create(new_favourites)
-      updated_favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
-      Fizzbuzzer.call(current_page_numbers, updated_favourites)
-    else 
-      Fizzbuzzer.call(current_page_numbers, saved_favourites)
-    end
-  end
-    
+  
+  def update_favourites
+    current_user_id = session[:user_id]
+    favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
+    numbers_pager = NumbersPager.new({params: params,
+                                 generator: ExtendedFizzbuzzGenerator.new({favourites: favourites,
+                                                                           params: params,
+                                                                           current_user_id: current_user_id})})
+    @fizzbuzz_numbers = numbers_pager.call
+    redirect_back(fallback_location: favourites_path)
+  end  
   # GET /favourites/1
   # GET /favourites/1.json
   def show
@@ -87,6 +80,6 @@ class FavouritesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def favourite_params
-      params.require(:favourite).permit(:number, :favourite_numbers, :page, :per_page).merge(user_id: session[:user_id])
+      params.require(:favourite).permit(:number).merge(user_id: session[:user_id])
     end
 end
