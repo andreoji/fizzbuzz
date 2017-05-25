@@ -6,7 +6,7 @@ class ExtendedFizzbuzzGenerator < FizzbuzzGenerator
   end
   def numbers(page, per_page)
     current = current_page_numbers(page, per_page)
-    updates = FavouritesUpdater.call(@marked_as_favourites, current, @favourites)
+    updates = FavouritesLogic.call(@marked_as_favourites, current, @favourites)
 
     Favourite.where("user_id = ?", @current_user_id).
       where(number: updates[:deleted_favourites]).

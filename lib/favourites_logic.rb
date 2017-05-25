@@ -1,5 +1,8 @@
-class FavouritesUpdater
+class FavouritesLogic
   def self.call(marked_as_favourites, current_page_numbers, saved_favourites)
+    unless marked_as_favourites.nil?
+      raise 'numbers must be within page limits' unless marked_as_favourites.all? { |n| current_page_numbers.include? n.to_i } 
+    end
     updates = { new_favourites: [], deleted_favourites: [] }
     currently_displayed_favourites = saved_favourites & current_page_numbers
 

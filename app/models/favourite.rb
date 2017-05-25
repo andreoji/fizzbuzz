@@ -1,4 +1,4 @@
 class Favourite < ApplicationRecord
-  validates_presence_of :number, uniqueness: true, null: false
+  validates_presence_of :number, null: false
   belongs_to :user
 end
