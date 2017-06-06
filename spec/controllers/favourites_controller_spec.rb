@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe FavouritesController, :type => :controller do
 
   describe '#index' do
-    let!(:jose) { create(:user, username: 'jose', password_digest: 'elixir') }
-    let!(:chris) { create(:user, username: 'chris', password_digest: 'phoenix') }
+    let!(:jose) { create(:user, username: 'jose', password: 'elixir') }
+    let!(:chris) { create(:user, username: 'chris', password: 'phoenix') }
     let!(:jose_favourite) { create(:favourite, number: 1, user_id: jose.id) }
     let!(:jose_other_favourite) { create(:favourite, number: 2, user_id: jose.id) }
     let!(:chris_favourite) { create(:favourite, number: 3, user_id: chris.id) }
@@ -26,8 +26,8 @@ RSpec.describe FavouritesController, :type => :controller do
   end
 
   describe '#update_favourites' do
-    let!(:jose) { create(:user, username: 'jose', password_digest: 'elixir') }
-    let!(:chris) { create(:user, username: 'chris', password_digest: 'phoenix') }
+    let!(:jose) { create(:user, username: 'jose', password: 'elixir') }
+    let!(:chris) { create(:user, username: 'chris', password: 'phoenix') }
     let!(:jose_favourite_1) { create(:favourite, number: 1, user_id: jose.id) }
     let!(:jose_favourite_2) { create(:favourite, number: 2, user_id: jose.id) }
     let!(:chris_favourite) { create(:favourite, number: 3, user_id: chris.id) }
