@@ -7,6 +7,22 @@ RSpec.describe 'Favourites API', :type => :request do
     before(:all) { 
       @token = sign_in_as_a_valid_program
     }
+    describe 'given an invalid token' do
+      before do
+        get "#{ api_v1_favourites_path }.json", headers: { 'Authorization' => 'Token token=xyzabcInvalidtoken' }
+      end
+      it 'return access denied error' do
+        json = JSON.parse(response.body)
+        expect(json).to eq({"errors" => [{"detail" => "Access denied"}]})
+      end
+      it 'returns status code 401' do 
+        json = JSON.parse(response.body)
+        expect(response.status).to eq 401
+      end
+      it 'content-type negotiated as application/json' do
+        expect(response.content_type).to eq 'application/json'
+      end
+    end
     describe 'given pagination defaults of page=1 and per_page=100' do
       before do
         get "#{ api_v1_favourites_path }.json", headers: { 'Authorization' => "Token token=#{ @token }" }
@@ -33,8 +49,9 @@ RSpec.describe 'Favourites API', :type => :request do
     end
     describe 'given pagination settings of page=2 and per_page=21' do
       before do
-        get "#{ api_v1_favourites_path }.json", params: { page: 2, per_page: 21 },
-                                               headers: { 'Authorization' => "Token token=#{ @token }" }
+        get "#{ api_v1_favourites_path }.json",
+          params: { page: 2, per_page: 21 },
+          headers: { 'Authorization' => "Token token=#{ @token }" }
       end
       it 'returns the second page of fizzbuzz numbers' do
         json = JSON.parse(response.body)
@@ -66,8 +83,9 @@ RSpec.describe 'Favourites API', :type => :request do
     context 'given pagination defaults of page=1 and per_page=100' do
       context 'when 1, 2, 3 are favourited' do
         before do
-          put "#{ api_v1_favourites_path }.json", params: { 'marked_as_favourites' => ['1', '2', '3'] },
-                                                  headers: { 'Authorization' => "Token token=#{ @token }" } 
+          put "#{ api_v1_favourites_path }.json",
+            params: { 'marked_as_favourites' => ['1', '2', '3'] },
+            headers: { 'Authorization' => "Token token=#{ @token }" } 
         end
         it 'then the first page\'s favourites will be 1, 2, 3' do
           json = JSON.parse(response.body)
@@ -281,6 +299,47 @@ RSpec.describe 'Favourites API', :type => :request do
           expect(response.headers['X-Next-Page']).to eq 2
           expect(response.headers['X-Previous-Page']).to eq nil 
         end
+      end
+    end
+  end
+  describe 'GET /api/v1/logout' do
+    before(:all) { 
+      @token = sign_in_as_a_valid_program
+    }
+    describe 'given a logout' do
+      before do
+        get "#{ api_v1_logout_path }.json", headers: { 'Authorization' => "Token token=#{ @token }" }
+        get "#{ api_v1_favourites_path }.json", headers: { 'Authorization' => "Token token=#{ @token }" }
+      end
+      it 'return access denied error' do
+        json = JSON.parse(response.body)
+        expect(json).to eq({"errors" => [{"detail" => "Access denied"}]})
+      end
+      it 'returns status code 401' do 
+        json = JSON.parse(response.body)
+        expect(response.status).to eq 401
+      end
+      it 'content-type negotiated as application/json' do
+        expect(response.content_type).to eq 'application/json'
+      end
+    end
+    describe 'given an expired token' do
+      before do
+        api_client = User.find_by_username('api_client')
+        api_client.token_created_at = 2.days.ago
+        api_client.save!
+        get "#{ api_v1_favourites_path }.json", headers: { 'Authorization' => "Token token=#{ @token }" }
+      end
+      it 'return access denied error' do
+        json = JSON.parse(response.body)
+        expect(json).to eq({"errors" => [{"detail" => "Access denied"}]})
+      end
+      it 'returns status code 401' do 
+        json = JSON.parse(response.body)
+        expect(response.status).to eq 401
+      end
+      it 'content-type negotiated as application/json' do
+        expect(response.content_type).to eq 'application/json'
       end
     end
   end
