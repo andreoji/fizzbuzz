@@ -22,6 +22,6 @@ class FavouritesController < ApplicationController
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def favourite_params
-      params.require(:favourite).permit(:number).merge(user_id: session[:user_id])
+      params.require(:favourite).permit(:number).merge(user_id: session[:current_user_id])
     end
 end
