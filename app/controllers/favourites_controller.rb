@@ -2,14 +2,14 @@ class FavouritesController < ApplicationController
   before_action :authorize
 
   def index
-    current_user_id = session[:user_id]
+    current_user_id = session[:current_user_id]
     favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
     numbers_pager = NumbersPager.new({params: params, generator: FizzbuzzGenerator.new(favourites: favourites)})
     @fizzbuzz_numbers = numbers_pager.call
   end
   
   def update_favourites
-    current_user_id = session[:user_id]
+    current_user_id = session[:current_user_id]
     favourites = Favourite.where("user_id = ?", current_user_id).pluck(:number)
     numbers_pager = NumbersPager.new({params: params,
                                  generator: ExtendedFizzbuzzGenerator.new({favourites: favourites,

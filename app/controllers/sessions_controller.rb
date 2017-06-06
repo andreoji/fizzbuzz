@@ -5,7 +5,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:password])
       # Save the user id inside the browser cookie. This is how we keep the user 
       # logged in when they navigate around our website.
-      session[:user_id] = user.id
+      session[:current_user_id] = user.id
       redirect_to favourites_path 
     else
     # If user's login doesn't work, send them back to the login form.
@@ -16,7 +16,5 @@ class SessionsController < ApplicationController
   def destroy
     reset_session
     redirect_to login_path notice: 'Logged out'
-  end
-  def new
   end
 end

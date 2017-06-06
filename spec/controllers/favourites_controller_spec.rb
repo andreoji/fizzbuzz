@@ -10,7 +10,7 @@ RSpec.describe FavouritesController, :type => :controller do
     let!(:chris_favourite) { create(:favourite, number: 3, user_id: chris.id) }
 
     before(:each){
-      get :index, session: {user_id: jose.id}
+      get :index, session: {current_user_id: jose.id}
     }
     it 'assigns the currently logged in user\'s favourites' do
       assigned_fizzbuzz_numbers = assigns(:fizzbuzz_numbers)
@@ -34,7 +34,7 @@ RSpec.describe FavouritesController, :type => :controller do
 
     before(:each){
       put :update_favourites,
-           session: { user_id: jose.id },
+           session: { current_user_id: jose.id },
            params: { 'marked_as_favourites' => ['1', '2', '9', '15'] } 
     }
     it 'assigns the currently logged in user\'s favourites' do
