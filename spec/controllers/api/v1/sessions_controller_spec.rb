@@ -32,4 +32,13 @@ RSpec.describe Api::V1::SessionsController, :type => :controller do
       end
     end
   end
+  describe '#destroy' do
+    before(:each) do
+      request.env["HTTP_AUTHORIZATION"] = "Token token=#{ sign_in_as_a_valid_program }"
+    end
+    it 'returns a 200 status code' do
+      get :destroy
+      expect(response.status).to eq 200 
+    end
+  end
 end
